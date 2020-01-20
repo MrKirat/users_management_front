@@ -7,13 +7,21 @@ const Dashboard = props => {
   const [meta, setMeta] = useState();
 
   useEffect(() => {
-    getEmployees(1, 2)
+    getEmployees()
       .then(resp => {
         setEmployees(resp.data.employees);
         setMeta(resp.data.meta);
         console.log(resp);
       })
   }, []);
+
+  const onPageChangeHandler = page => {
+    getEmployees(page.selected + 1)
+      .then(resp => {
+        setEmployees(resp.data.employees);
+        setMeta(resp.data.meta);
+      })
+  }
 
   return (
     <div className="dashboard">
@@ -47,6 +55,7 @@ const Dashboard = props => {
           pageRangeDisplayed={5}
           initialSelected={meta?.currentPage}
           forcePage={meta?.currentPage}
+          onPageChange={onPageChangeHandler}
           containerClassName={'pagination'}
           subContainerClassName={'pages pagination'}
           activeClassName={'active'}
