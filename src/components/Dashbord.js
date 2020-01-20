@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { getEmployees } from '../users_management_api/';
+import ReactPaginate from 'react-paginate';
 
 const Dashboard = props => {
   const [employees, setEmployees] = useState();
   const [meta, setMeta] = useState();
 
   useEffect(() => {
-    getEmployees()
+    getEmployees(1, 2)
       .then(resp => {
         setEmployees(resp.data.employees);
-        setMeta(resp.meta);
+        setMeta(resp.data.meta);
+        console.log(resp);
       })
   }, []);
-
-  ;
-
-  console.log(employees);
 
   return (
     <div className="dashboard">
@@ -39,7 +37,20 @@ const Dashboard = props => {
           )}
         </tbody>
       </table>
-      
+      <ReactPaginate
+          previousLabel={'previous'}
+          nextLabel={'next'}
+          breakLabel={'...'}
+          breakClassName={'break-me'}
+          pageCount={meta?.totalPages}
+          marginPagesDisplayed={2}
+          pageRangeDisplayed={5}
+          initialSelected={meta?.currentPage}
+          forcePage={meta?.currentPage}
+          containerClassName={'pagination'}
+          subContainerClassName={'pages pagination'}
+          activeClassName={'active'}
+        />
     </div>
   );
 }
