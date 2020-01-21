@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
-import { getEmployee, updateEmployee } from '../users_management_api';
+import { Form, Button } from 'react-bootstrap';
+
+import { getEmployee, updateEmployee } from '../../users_management_api';
 
 const EditUser = props => {
   const [user, setUser] = useState();
@@ -40,28 +42,28 @@ const EditUser = props => {
   }
 
   return (
-    <form onSubmit={e => submitForm(e)}>
-      <div>
-        <label>Name</label>
+    <Form onSubmit={e => submitForm(e)}>
+      <Form.Group>
+        <Form.Label>Name</Form.Label>
         <input
           type="text"
           name="name"
           onChange={e => setName(e.target.value)}
           value={user?.name}
           required />
-      </div>
-      <div>
-        <label>Active</label>
-        <input
+      </Form.Group>
+      <Form.Group>
+        <Form.Check
           type="checkbox"
           name="active"
+          label="Active"
           onChange={e => setActive(e.target.value)}
           defaultChecked={user?.active}
           required />
-      </div>
-      <button type="submit">Save</button>
-      <button onClick={handleBack}>Back</button>
-    </form>
+      </Form.Group>
+      <Button variant="primary" onClick={handleBack}>Back</Button>
+      <Button className="ml-2" variant="success" type="submit">Save</Button>
+    </Form>
   );
 }
 

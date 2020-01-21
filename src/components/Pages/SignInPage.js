@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { signInUser } from '../authentication/index.js';
 import { Redirect } from 'react-router-dom';
+import { Form, Button } from 'react-bootstrap';
+
+import { signInUser } from '../../authentication/index.js';
+
 const SignInPage = props => {
   const [email, setEmail] = useState('somtest@test.com');
   const [password, setPassword] = useState('123456');
@@ -15,27 +18,29 @@ const SignInPage = props => {
   return (
     redirect ?
       <Redirect to="/dashboard" /> :
-      <form onSubmit={e => submitForm(e)}>
-        <div>
-          <label>Email Address</label>
-          <input
+      <Form onSubmit={e => submitForm(e)}>
+        <Form.Group controlId="formSignInEmail">
+          <Form.Label>Email Address</Form.Label>
+          <Form.Control
             type="email"
             name="email"
+            placeholder="Enter email"
             onChange={e => setEmail(e.target.value)}
             value={email}
             required />
-        </div>
-        <div>
-          <label>Password</label>
-          <input
+        </Form.Group>
+        <Form.Group controlId="formSignInPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
             type="password"
             name="password"
+            placeholder="Enter password"
             onChange={e => setPassword(e.target.value)}
             value={password}
             required />
-        </div>
-        <button type="submit">Sign In</button>
-      </form >
+        </Form.Group>
+        <Button type="submit">Sign In</Button>
+      </Form >
   );
 }
 

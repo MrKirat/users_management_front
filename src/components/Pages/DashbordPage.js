@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import ReactPaginate from 'react-paginate';
 import { Link, Redirect } from 'react-router-dom';
+import { Table, Form, Button } from 'react-bootstrap';
 
-import { getEmployees, deleteEmployee, deleteCurrentEmployee } from '../users_management_api/';
-import { isAuthenticated } from '../authentication';
-import * as creds from '../authentication/creds';
+import { getEmployees, deleteEmployee, deleteCurrentEmployee } from '../../users_management_api';
+import { isAuthenticated } from '../../authentication';
+import * as creds from '../../authentication/creds';
 
 const PER_PAGE = 10;
 
 const Dashboard = props => {
   const [employees, setEmployees] = useState();
-  const [meta, setMeta] = useState();
+  const [meta, setMeta] = useState({});
   const [searchValue, setSearchValue] = useState('');
   const [isAuth, setIsAuth] = useState(isAuthenticated());
 
-  function updateEmployeesList(page = 1) {
+  function updateEmployeesList(page) {
     return getEmployees(page, PER_PAGE, searchValue)
       .then(resp => {
-        setEmployees(resp.data.employees);
         setMeta(resp.data.meta);
+        setEmployees(resp.data.employees);
       })
       .catch(error => {
         return Promise.reject(error);
@@ -26,7 +27,7 @@ const Dashboard = props => {
   }
 
   useEffect(() => {
-    updateEmployeesList();
+    updateEmployeesList(1);
   }, []);
 
   const onPageChangeHandler = page => {
@@ -39,7 +40,7 @@ const Dashboard = props => {
 
   const searchSubmitHandler = event => {
     event.preventDefault();
-    updateEmployeesList();
+    updateEmployeesList(1);
   }
 
   const handleDelete = employee => {
@@ -52,7 +53,7 @@ const Dashboard = props => {
     } else {
       deleteEmployee(employee.id)
         .then(resp => {
-          updateEmployeesList();
+          updateEmployeesList(1);
         });
     }
   }
@@ -63,11 +64,13 @@ const Dashboard = props => {
 
   return (
     <div className="dashboard">
-      <form onSubmit={searchSubmitHandler}>
-        <input value={searchValue} onChange={searchChangeHandler} type='text' />
-        <button type='submit'>Search</button>
-      </form>
-      <table>
+      <Form className="mb-4" onSubmit={searchSubmitHandler}>
+        <div className="d-flex">
+          <Form.Control value={searchValue} onChange={searchChangeHandler} type='text' />
+          <Button type='submit'>Search</Button>
+        </div>
+      </Form>
+      <Table striped bordered>
         <thead>
           <tr>
             <td>ID</td>
@@ -85,22 +88,29 @@ const Dashboard = props => {
               <td>{String(employee.active)}</td>
               <td>{employee.department.name}</td>
               <td>
-                <Link to={`/user/${employee.id}`} >Edit</Link>
-                |
-                <button onClick={e => handleDelete(employee)}>Delete</button></td>
+                <Button variant="primary" className="mr-2" as={Link} to={`/user/${employee.id}`} >Edit</Button>
+                <Button variant="danger" onClick={e => handleDelete(employee)}>Delete</Button></td>
             </tr>
           )}
         </tbody>
-      </table>
+      </Table>
       <ReactPaginate
-        previousLabel={'previous'}
-        nextLabel={'next'}
-        breakLabel={'...'}
-        breakClassName={'break-me'}
+        // labels
+        previousLabel={'<'}
+        nextLabel={'>'}
+        breakLabel={<a className="page-link">...</a>}
+        // classes
+        breakClassName={'page-item'}
+        pageClassName="page-item"
+        previousClassName="page-item"
+        nextClassName="page-item"
+        pageLinkClassName="page-link"
+        previousLinkClassName="page-link"
+        nextLinkClassName="page-link"
+        // configs
         pageCount={meta?.totalPages}
         marginPagesDisplayed={2}
         pageRangeDisplayed={5}
-        initialSelected={meta?.currentPage}
         forcePage={meta?.currentPage}
         onPageChange={onPageChangeHandler}
         containerClassName={'pagination'}

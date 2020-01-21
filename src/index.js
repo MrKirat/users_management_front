@@ -2,17 +2,19 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-import Dashboard from './components/Dashbord';
-import SignUpPage from './components/SignUpPage';
-import SignInPage from './components/SignInPage';
-import EditUser from './components/EditUserPage';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import Dashboard from './components/Pages/DashbordPage';
+import SignUpPage from './components/Pages/SignUpPage';
+import SignInPage from './components/Pages/SignInPage';
+import EditUser from './components/Pages/EditUserPage';
 
 import {
   BrowserRouter as Router,
   Switch
 } from "react-router-dom";
-import PrivateRoute from './components/PrivateRoute';
-import PublicRoute from './components/PublicRoute';
+import PrivateRoute from './components/Routing/PrivateRoute';
+import PublicRoute from './components/Routing/PublicRoute';
 
 import * as serviceWorker from './serviceWorker';
 
