@@ -63,4 +63,14 @@ const deleteEmployee = (id) => {
     });
 }
 
-export { getEmployee, getEmployees, updateEmployee, deleteEmployee };
+const deleteCurrentEmployee = () => {
+  return instance.delete(`/auth`)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      return Promise.reject(error);
+    });
+}
+
+export { getEmployee, getEmployees, updateEmployee, deleteEmployee, deleteCurrentEmployee };
