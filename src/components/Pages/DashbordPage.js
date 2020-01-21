@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import ReactPaginate from 'react-paginate';
 import { Link, Redirect } from 'react-router-dom';
-import { Table, Form, Button } from 'react-bootstrap';
+import { Table, Form, Button, Pagination } from 'react-bootstrap';
 
 import { getEmployees, deleteEmployee, deleteCurrentEmployee } from '../../users_management_api';
 import { isAuthenticated } from '../../authentication';
@@ -30,8 +29,9 @@ const Dashboard = props => {
     updateEmployeesList(1);
   }, []);
 
-  const onPageChangeHandler = page => {
-    updateEmployeesList(page.selected + 1)
+  const onPageChangeHandler = event => {
+    console.log(event.target)
+    updateEmployeesList(event.target.text)
   }
 
   const searchChangeHandler = event => {
@@ -61,6 +61,17 @@ const Dashboard = props => {
   if (!isAuth) {
     return <Redirect to="/sign-in" />
   }
+
+  let active = meta?.currentPage;
+  let items = [<Pagination.First />, <Pagination.Prev />];
+  for (let number = 1; number <= meta?.totalPages; number++) {
+    items.push(
+      <Pagination.Item key={number} active={number === active}>
+        {number}
+      </Pagination.Item>,
+    );
+  }
+  items.push([<Pagination.Next />, <Pagination.Last />]);
 
   return (
     <div className="dashboard">
@@ -94,29 +105,7 @@ const Dashboard = props => {
           )}
         </tbody>
       </Table>
-      <ReactPaginate
-        // labels
-        previousLabel={'<'}
-        nextLabel={'>'}
-        breakLabel={<a className="page-link">...</a>}
-        // classes
-        breakClassName={'page-item'}
-        pageClassName="page-item"
-        previousClassName="page-item"
-        nextClassName="page-item"
-        pageLinkClassName="page-link"
-        previousLinkClassName="page-link"
-        nextLinkClassName="page-link"
-        // configs
-        pageCount={meta?.totalPages}
-        marginPagesDisplayed={2}
-        pageRangeDisplayed={5}
-        forcePage={meta?.currentPage}
-        onPageChange={onPageChangeHandler}
-        containerClassName={'pagination'}
-        subContainerClassName={'pages pagination'}
-        activeClassName={'active'}
-      />
+      <Pagination onClick={onPageChangeHandler}>{items}</Pagination>
     </div>
   );
 }
