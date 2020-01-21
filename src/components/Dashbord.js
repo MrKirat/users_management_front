@@ -1,26 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { getEmployees } from '../users_management_api/';
+import { getEmployees, deleteEmployee } from '../users_management_api/';
 import ReactPaginate from 'react-paginate';
+import { Link } from 'react-router-dom';
+
+const PER_PAGE = 10;
 
 const Dashboard = props => {
   const [employees, setEmployees] = useState();
   const [meta, setMeta] = useState();
   const [searchValue, setSearchValue] = useState('');
 
-  useEffect(() => {
-    getEmployees()
+  function updateEmployeesList(page = 1) {
+    getEmployees(page, PER_PAGE, searchValue)
       .then(resp => {
         setEmployees(resp.data.employees);
         setMeta(resp.data.meta);
       })
+  }
+
+  useEffect(() => {
+    updateEmployeesList();
   }, []);
 
   const onPageChangeHandler = page => {
-    getEmployees(page.selected + 1, 10, searchValue)
-      .then(resp => {
-        setEmployees(resp.data.employees);
-        setMeta(resp.data.meta);
-      })
+    updateEmployeesList(page.selected + 1)
   }
 
   const searchChangeHandler = event => {
@@ -29,12 +32,12 @@ const Dashboard = props => {
 
   const searchSubmitHandler = event => {
     event.preventDefault();
-    getEmployees(1, 10, searchValue)
-      .then(resp => {
-        setEmployees(resp.data.employees);
-        setMeta(resp.data.meta);
-        console.log(resp)
-      })
+    updateEmployeesList();
+  }
+
+  const handleDelete = id => {
+    deleteEmployee(id)
+      .then(updateEmployeesList());
   }
 
   return (
@@ -50,6 +53,7 @@ const Dashboard = props => {
             <td>NAME</td>
             <td>ACTIVE</td>
             <td>DEPARTMENT</td>
+            <td>ACTIONS</td>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +63,10 @@ const Dashboard = props => {
               <td>{employee.name}</td>
               <td>{String(employee.active)}</td>
               <td>{employee.department.name}</td>
+              <td>
+                <Link to={`/user/${employee.id}`} >Edit</Link>
+                |
+                <button onClick={e => handleDelete(employee.id)}>Delete</button></td>
             </tr>
           )}
         </tbody>

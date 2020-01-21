@@ -1,18 +1,21 @@
 import axios from 'axios';
 import * as creds from '../authentication/creds';
 
-const { token, client, uid } = creds.get();
+
 const instance = axios.create({
   baseURL: 'http://localhost:3000/api/v1/',
-  headers: { 'access-token': token, client, uid }
 });
 
 instance.interceptors.request.use(
   config => {
-    console.log(config)
+    const { token, client, uid } = creds.get();
+
+    config.headers = { 'access-token': token, client, uid };
+    console.log(config);
     return config;
   },
   error => {
+    console.log(error);
     return Promise.reject(error);
   }
 );
@@ -28,4 +31,36 @@ const getEmployees = (page = 1, perPage = 10, employeeName = '') => {
     });
 }
 
-export { getEmployees };
+const getEmployee = (id) => {
+  return instance.get(`/employees/${id}`)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      return Promise.reject(error);
+    });
+}
+
+const updateEmployee = (id, { name, departmentId, active }) => {
+  const employee = { name, departmentId, active }
+
+  return instance.put(`/employees/${id}`, { employee })
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      return Promise.reject(error);
+    });
+}
+
+const deleteEmployee = (id) => {
+  return instance.delete(`/employees/${id}`)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      return Promise.reject(error);
+    });
+}
+
+export { getEmployee, getEmployees, updateEmployee, deleteEmployee };

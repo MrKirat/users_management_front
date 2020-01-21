@@ -5,6 +5,7 @@ import './index.css';
 import Dashboard from './components/Dashbord';
 import SignUpPage from './components/SignUpPage';
 import SignInPage from './components/SignInPage';
+import EditUser from './components/EditUserPage';
 
 import {
   BrowserRouter as Router,
@@ -20,6 +21,7 @@ ReactDOM.render(
     <Switch>
       <PublicRoute restricted={true} component={SignUpPage} path="/sign-up" />
       <PublicRoute restricted={true} component={SignInPage} path="/sign-in" />
+      <PrivateRoute component={EditUser} path="/user/:id" />
       <PrivateRoute component={Dashboard} path="/dashboard" />
     </Switch>
   </Router>,

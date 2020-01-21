@@ -11,16 +11,18 @@ const PrivateRoute = ({ component: Component, ...rest }) => {
       .finally(() => setRedirect(true));
   }
 
+  if (!isAuthenticated() || redirect) {
+    return <Redirect to="/sign-in" />
+  }
+
   return (
     <Route {...rest} render={props => (
-      isAuthenticated() || !redirect ?
-        <>
-          <header>
-            <NavLink to="/sign-in" onClick={signOutHandler}>Sign out</NavLink>
-          </header>
-          <Component {...props} />
-        </> :
-        <Redirect to="/sign-in" />
+      <>
+        <header>
+          <NavLink to="/sign-in" onClick={signOutHandler}>Sign out</NavLink>
+        </header>
+        <Component {...props} />
+      </>
     )} />
   );
 };
