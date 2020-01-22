@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 
-import { getEmployee, updateEmployee } from '../../users_management_api';
+import { getEmployee, updateEmployee } from '../../api';
 
 const EditUser = props => {
   const [user, setUser] = useState();

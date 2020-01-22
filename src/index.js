@@ -10,6 +10,7 @@ import SignInPage from './components/Pages/SignInPage';
 import EditUser from './components/Pages/EditUserPage';
 
 import {
+  Redirect,
   BrowserRouter as Router,
   Switch
 } from "react-router-dom";
@@ -25,6 +26,7 @@ ReactDOM.render(
       <PublicRoute restricted={true} component={SignInPage} path="/sign-in" />
       <PrivateRoute component={EditUser} path="/user/:id" />
       <PrivateRoute component={Dashboard} path="/dashboard" />
+      <Redirect from="*" to="/sign-in" />
     </Switch>
   </Router>,
   document.getElementById('root')

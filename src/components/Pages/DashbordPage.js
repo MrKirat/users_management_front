@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { Table, Form, Button, Pagination } from 'react-bootstrap';
 
-import { getEmployees, deleteEmployee, deleteCurrentEmployee } from '../../users_management_api';
+import { getEmployees, deleteEmployee, deleteCurrentEmployee } from '../../api';
 import { isAuthenticated } from '../../authentication';
 import * as creds from '../../authentication/creds';
 

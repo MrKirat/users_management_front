@@ -5,8 +5,8 @@ import { Form, Button } from 'react-bootstrap';
 import { signInUser } from '../../authentication/index.js';
 
 const SignInPage = props => {
-  const [email, setEmail] = useState('somtest@test.com');
-  const [password, setPassword] = useState('123456');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [redirect, setRedirect] = useState(false);
 
   const submitForm = e => {
