@@ -18,7 +18,7 @@ const RegisterPage = props => {
     getDepartments()
       .then(resp => {
         setDepartmentsList(resp.data.departments);
-        setEmployeeDepartment(resp.data.departments[0]);
+        setEmployeeDepartment(`${resp.data.departments[0].id}`);
       });
   }, [])
 
@@ -65,9 +65,8 @@ const RegisterPage = props => {
             type="checkbox"
             name="active"
             label="Active"
-            onChange={e => setActive(e.target.value)}
-            defaultChecked={active}
-            required />
+            onClick={e => setActive(e.target.checked)}
+            checked={active} />
         </Form.Group>
         <Form.Group controlId="formSignUpPassword">
           <Form.Label>Password</Form.Label>

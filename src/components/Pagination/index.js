@@ -13,6 +13,7 @@ const CustomPagination = props => {
     } else if (label.indexOf('›') > -1) {
       return currPage == lastPage ? lastPage : currPage + 1;
     }
+
     return label;
   }
 

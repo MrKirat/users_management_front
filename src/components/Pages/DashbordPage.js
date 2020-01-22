@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Redirect } from 'react-router-dom';
-import { Table, Form, Button } from 'react-bootstrap';
+import { Table, Form, Button, Row, Col } from 'react-bootstrap';
 
 import { getEmployees, deleteEmployee, deleteCurrentEmployee } from '../../api';
 import { isAuthenticated } from '../../authentication';
@@ -44,7 +44,7 @@ const Dashboard = props => {
   }
 
   const handleDelete = employee => {
-    if (employee.email == creds.get().uid) {
+    if (employee.email === creds.get().uid) {
       deleteCurrentEmployee()
         .finally(resp => {
           creds.remove();
@@ -53,7 +53,18 @@ const Dashboard = props => {
     } else {
       deleteEmployee(employee.id)
         .then(resp => {
-          updateEmployeesList(1);
+          let pageNumber = meta?.currentPage;
+
+          if(meta?.totalEntries % PER_PAGE === 1){
+            pageNumber = meta?.currentPage - 1;
+          }
+          if(pageNumber < 1){
+            pageNumber = 1;
+          }
+
+          console.log(pageNumber);
+
+          updateEmployeesList(pageNumber);
         });
     }
   }
@@ -63,42 +74,52 @@ const Dashboard = props => {
   }
 
   return (
-    <div className="dashboard">
-      <Form className="mb-4" onSubmit={searchSubmitHandler}>
-        <div className="d-flex">
-          <Form.Control value={searchValue} onChange={searchChangeHandler} type='text' />
-          <Button type='submit'>Search</Button>
-        </div>
-      </Form>
-      <Table striped bordered>
-        <thead>
-          <tr>
-            <td>ID</td>
-            <td>NAME</td>
-            <td>ACTIVE</td>
-            <td>DEPARTMENT</td>
-            <td>ACTIONS</td>
-          </tr>
-        </thead>
-        <tbody>
-          {employees?.map(employee =>
-            <tr key={employee.id}>
-              <td>{employee.id}</td>
-              <td>{employee.name}</td>
-              <td>{String(employee.active)}</td>
-              <td>{employee.department.name}</td>
-              <td>
-                <Button variant="primary" className="mr-2" as={Link} to={`/user/${employee.id}`} >Edit</Button>
-                <Button variant="danger" onClick={e => handleDelete(employee)}>Delete</Button></td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
-      <CustomPagination
-        currentPage={meta?.currentPage}
-        totalPages={meta?.totalPages}
-        onPageChange={onPageChangeHandler} />
-    </div>
+    <>
+      <Row className="dashboard">
+        <Col lg={5}>
+          <Form className="mb-4 mt-4" onSubmit={searchSubmitHandler}>
+            <div className="d-flex">
+              <Form.Control value={searchValue} onChange={searchChangeHandler} type='text' />
+              <Button type='submit'>Search</Button>
+            </div>
+          </Form>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Table striped bordered>
+            <thead>
+              <tr>
+                <td>ID</td>
+                <td>NAME</td>
+                <td>EMAIL</td>
+                <td>ACTIVE</td>
+                <td>DEPARTMENT</td>
+                <td>ACTIONS</td>
+              </tr>
+            </thead>
+            <tbody>
+              {employees?.map(employee =>
+                <tr key={employee.id}>
+                  <td>{employee.id}</td>
+                  <td>{employee.name}</td>
+                  <td>{employee.email}</td>
+                  <td>{String(employee.active)}</td>
+                  <td>{employee.department.name}</td>
+                  <td>
+                    <Button variant="primary" className="mr-2" as={Link} to={`/user/${employee.id}`} >Edit</Button>
+                    <Button variant="danger" onClick={e => handleDelete(employee)}>Delete</Button></td>
+                </tr>
+              )}
+            </tbody>
+          </Table>
+          <CustomPagination
+            currentPage={meta?.currentPage}
+            totalPages={meta?.totalPages}
+            onPageChange={onPageChangeHandler} />
+        </Col>
+      </Row>
+    </>
   );
 }
 
