@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 
+import { getDepartments } from '../../api';
 import { signUpUser } from '../../authentication/index.js';
 
 const RegisterPage = props => {
@@ -10,10 +11,20 @@ const RegisterPage = props => {
   const [active, setActive] = useState(true);
   const [password, setPassword] = useState('');
   const [redirect, setRedirect] = useState(false);
+  const [employeeDepartment, setEmployeeDepartment] = useState('');
+  const [departmentsList, setDepartmentsList] = useState([]);
+
+  useEffect(() => {
+    getDepartments()
+      .then(resp => {
+        setDepartmentsList(resp.data.departments);
+        setEmployeeDepartment(resp.data.departments[0]);
+      });
+  }, [])
 
   const submitForm = e => {
     e.preventDefault();
-    signUpUser({ email, name, active, department_id: 1, password })
+    signUpUser({ email, name, active, department_id: employeeDepartment, password })
       .then(() => setRedirect(true));
   }
 
@@ -40,6 +51,14 @@ const RegisterPage = props => {
             onChange={e => setEmail(e.target.value)}
             value={email}
             required />
+        </Form.Group>
+        <Form.Group controlId="formSignUpDepartment">
+          <Form.Label>Select department</Form.Label>
+          <Form.Control value={employeeDepartment} onChange={e => setEmployeeDepartment(e.target.value)} as="select">
+            {departmentsList.map(d =>
+              <option value={d.id} key={d.id}>{d.name}</option>
+            )}
+          </Form.Control>
         </Form.Group>
         <Form.Group controlId="formSignUpActive">
           <Form.Check

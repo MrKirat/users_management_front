@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 
-import { getEmployee, updateEmployee } from '../../api';
+import { getEmployee, updateEmployee, getDepartments } from '../../api';
 
 const EditUser = props => {
   const [user, setUser] = useState();
   const [back, setBack] = useState();
+  const [departmentsList, setDepartmentsList] = useState([]);
 
   useEffect(() => {
     getEmployee(props.match.params.id)
@@ -16,6 +17,10 @@ const EditUser = props => {
       })
       .catch(err => {
         setBack(true);
+      })
+    getDepartments()
+      .then(resp => {
+        setDepartmentsList(resp.data.departments);
       })
   }, []);
 
@@ -29,37 +34,51 @@ const EditUser = props => {
   }
 
   const setName = name => {
-    setUser({...user, name});
+    setUser({ ...user, name });
   }
 
   const setActive = active => {
-    setUser({...user, active});
+    setUser({ ...user, active });
   }
+
+  const setDepartment = departmentId => {
+    setUser({ ...user, department: { id: departmentId } });
+  }
+
+  console.log(user);
 
   const submitForm = event => {
     event.preventDefault();
-    updateEmployee(user.id, user);
+    const { name, department: { id: departmentId }, active } = user
+    updateEmployee(user.id, { name, departmentId, active });
   }
 
   return (
     <Form onSubmit={e => submitForm(e)}>
-      <Form.Group>
+      <Form.Group controlId="formEditName">
         <Form.Label>Name</Form.Label>
-        <input
+        <Form.Control
           type="text"
           name="name"
           onChange={e => setName(e.target.value)}
           value={user?.name}
           required />
       </Form.Group>
-      <Form.Group>
+      <Form.Group controlId="formEditDepartment">
+        <Form.Label>Select department</Form.Label>
+        <Form.Control value={user?.department?.id} onChange={e => setDepartment(e.target.value)} as="select">
+          {departmentsList.map(d =>
+            <option value={d.id} key={d.id}>{d.name}</option>
+          )}
+        </Form.Control>
+      </Form.Group>
+      <Form.Group controlId="formEditActive">
         <Form.Check
           type="checkbox"
           name="active"
           label="Active"
-          onChange={e => setActive(e.target.value)}
-          defaultChecked={user?.active}
-          required />
+          onClick={e => setActive(e.target.checked)}
+          checked={user?.active} />
       </Form.Group>
       <Button variant="primary" onClick={handleBack}>Back</Button>
       <Button className="ml-2" variant="success" type="submit">Save</Button>

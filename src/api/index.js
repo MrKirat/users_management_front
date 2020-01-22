@@ -42,7 +42,7 @@ const getEmployee = (id) => {
 }
 
 const updateEmployee = (id, { name, departmentId, active }) => {
-  const employee = { name, departmentId, active }
+  const employee = { name, department_id: departmentId, active }
 
   return instance.put(`/employees/${id}`, { employee })
     .then(response => {
@@ -73,4 +73,21 @@ const deleteCurrentEmployee = () => {
     });
 }
 
-export { getEmployee, getEmployees, updateEmployee, deleteEmployee, deleteCurrentEmployee };
+const getDepartments = () => {
+  return instance.get(`/departments`)
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      return Promise.reject(error);
+    });
+}
+
+export {
+  getEmployee,
+  getEmployees,
+  updateEmployee,
+  deleteEmployee,
+  deleteCurrentEmployee,
+  getDepartments
+};
