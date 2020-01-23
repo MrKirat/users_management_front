@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as creds from './creds';
 
 const instance = axios.create({
-  baseURL: 'http://localhost:3000/api/v1/'
+  baseURL: process.env.REACT_APP_API_BASE_URL
 });
 
 instance.interceptors.request.use(
